@@ -87,7 +87,7 @@ con <- list(program = "JAGS", n.chains = 1, n.iter = 55000,
             n.burnin = 35000, n.thin = 2, n.adapt = 500, K = 100,
             C = 5000, working.directory = getwd(), 
             openbugs.directory = NULL, clearWD = TRUE, over.relax = TRUE,
-            knots = NULL, ObsTimes.knots = TRUE, lng.in.kn = 8, ordSpline = 4, 
+            knots = NULL, 
             bugs.seed = 1, quiet = FALSE)
 
 

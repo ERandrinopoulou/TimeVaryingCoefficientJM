@@ -83,7 +83,7 @@ Zs <- model.matrix(formYz, mfZ)
 ## Details of MCMC
 con <- list(program = "JAGS", n.chains = 3, n.iter = 150000,
             n.burnin = 50000, n.thin = 2, n.adapt = 5000, K = 100,
-            C = 5000, knots = NULL)
+            C = 5000, knots = NULL, quiet = FALSE)
 
 
 x <- list(X = X, Z = Z, W = if (survMod == "weibull-PH") {

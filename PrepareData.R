@@ -23,7 +23,7 @@ id <- data$IDnr #as.vector(unclass(lmeObject$groups[[1]]))
 
 offset <- as.vector(c(1, 1 + cumsum(tapply(data$IDnr, data$IDnr, length))))
 
-#################
+############################################
 ## Design matrices
 formYx <- formula(lmeObject)
 TermsX <- lmeObject$terms
@@ -79,16 +79,11 @@ mfZ <- model.frame(TermsZ, data = data.id2)
 Xs <- model.matrix(formYx, mfX)
 Zs <- model.matrix(formYz, mfZ)
 
-###########################
-
-
+############################################
 ## Details of MCMC
-con <- list(program = "JAGS", n.chains = 1, n.iter = 55000,
-            n.burnin = 35000, n.thin = 2, n.adapt = 500, K = 100,
-            C = 5000, working.directory = getwd(), 
-            openbugs.directory = NULL, clearWD = TRUE, over.relax = TRUE,
-            knots = NULL, 
-            bugs.seed = 1, quiet = FALSE)
+con <- list(program = "JAGS", n.chains = 3, n.iter = 150000,
+            n.burnin = 50000, n.thin = 2, n.adapt = 5000, K = 100,
+            C = 5000, knots = NULL)
 
 
 x <- list(X = X, Z = Z, W = if (survMod == "weibull-PH") {
@@ -101,7 +96,7 @@ x <- list(X = X, Z = Z, W = if (survMod == "weibull-PH") {
 })
 
 
-
+############################################
 # P-slines for baseline hazard
 
 tpower <- function(x, t, p)
@@ -139,9 +134,7 @@ WBHs <- B0
 #
 
 x <- c(x, list(WBH = WBH, WBHs = WBHs))
-##################
-
-
+############################################
 # P-slines for the coefficients that link the longitudinal and the survival outcome 
 
 
@@ -157,8 +150,8 @@ DDal <- diag(ncol(Lam))
 priorTau.alphas <- crossprod(diff(DDal, diff = 2)) + 1e-06 * DDal
 
 
-##################
-
+############################################
+# matrices dimensions
 ncX <- ncol(X)
 ncZ <- ncol(Z)
 ncW <- ncol(x$W)
@@ -171,15 +164,14 @@ C <- con$C
 
 nb <- ncZ 
 
+nY <- nrow(b)
 
-
-
+############################################
+# hyperpriors 
 mu0 <- rep(0,(ncZ))
-
 
 betas <- rep(0, ncX)
 var.betas <- rep(con$K, ncX)
-
 
 alphas <- rep(0, (ncF))
 var.alphas <- rep(con$K/10, (ncF))
@@ -193,15 +185,13 @@ var.gammas <- rep(con$K, (ncW))
 Bs.gammas <- rep(0, (ncWBH))
 var.Bs.gammas <- rep(con$K/10, (ncWBH))
 
-
 b <- cbind(data.matrix(ranef(lmeObject)))
 
-
-nY <- nrow(b)
 sigma2 <- lmeObject$sigma^2
 
 
 ############################################
+# Data for the MCMC
 
 Data <- list(N = nY, K = K, offset = offset, X = X, Xtime = Xtime, 
              y = y$y, 
@@ -244,4 +234,6 @@ Data <- list(N = nY, K = K, offset = offset, X = X, Xtime = Xtime,
              priorB.tausBs = 0.005
 )
 
+############################################
+# parameters to motinor
 parms <- c("betas", "tau", "inv.D","b", "gammas", "alphas", "Bs.gammas")

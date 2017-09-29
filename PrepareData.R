@@ -9,17 +9,14 @@ timeVar <- "echotime"
 lag <- 0
 survMod <- "spline-PH"
 
-#data.id$Time <- data.id$years
+
 Time <- data.id$years
 event <- data.id$status
-
-#data.id$group <- as.factor(data.id$group)
-#data$group <- as.factor(data$group)
 
 W <- model.matrix(~ -1 + group, data.id)[, c(2)]
 W <- as.matrix(W)
 
-id <- data$IDnr #as.vector(unclass(lmeObject$groups[[1]]))
+id <- data$IDnr 
 
 offset <- as.vector(c(1, 1 + cumsum(tapply(data$IDnr, data$IDnr, length))))
 
@@ -98,7 +95,6 @@ x <- list(X = X, Z = Z, W = if (survMod == "weibull-PH") {
 
 ############################################
 # P-slines for baseline hazard
-
 tpower <- function(x, t, p)
   # Function for truncated p-th power function
   (x - t) ^ p * (x > t)
@@ -118,7 +114,6 @@ thi = floor(max(Time)) +1
 tlo = 0
 nseg = 8
 bdeg = 2
-#con$knots <- rr <- c(-5.0, -2.5,  0.0,  2.5,  5.0,  7.5, 10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0)
 
 B0 = bbase1(Time, tlo, thi, nseg, bdeg)
 WBH <- B0
@@ -136,8 +131,6 @@ WBHs <- B0
 x <- c(x, list(WBH = WBH, WBHs = WBHs))
 ############################################
 # P-slines for the coefficients that link the longitudinal and the survival outcome 
-
-
 B0 = bbase1(Time, tlo, thi, nseg, bdeg)
 Lam <- B0
 
@@ -192,7 +185,6 @@ sigma2 <- lmeObject$sigma^2
 
 ############################################
 # Data for the MCMC
-
 Data <- list(N = nY, K = K, offset = offset, X = X, Xtime = Xtime, 
              y = y$y, 
              Xs = Xs, 

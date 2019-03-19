@@ -36,7 +36,6 @@ DF <- data.frame(year = times, drug = factor(rep(group, each = K)), age = rep(ag
 X <- model.matrix(~ 0 + drug + year, data = DF)
 Z <- model.matrix(~ year, data = DF)
 
-typeOperation <- sample(0:1, 300, replace = T)
 # design matrix for the survival model
 W <- cbind("(Intercept)" = 1, "Group" = group)
 
